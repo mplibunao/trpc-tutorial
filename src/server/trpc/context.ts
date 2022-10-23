@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
+import * as trpc from '@trpc/server'
 
 export function createContext({
 	req,
@@ -11,3 +12,7 @@ export function createContext({
 }
 
 export type Context = ReturnType<typeof createContext>
+
+export function createRouter() {
+	return trpc.router<Context>()
+}
