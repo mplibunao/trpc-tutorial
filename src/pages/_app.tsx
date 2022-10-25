@@ -1,19 +1,26 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { withTRPC } from '@trpc/next'
-import { getTrpcBaseUrl } from '@/utils/url'
 import { loggerLink } from '@trpc/client/links/loggerLink'
 import { httpBatchLink } from '@trpc/client/links/httpBatchLink'
 import superjson from 'superjson'
 import { AppRouter } from '@/server/trpc/app.router'
+import { isServer } from '@/utils/ssr'
 
 function MyApp({ Component, pageProps }: AppProps) {
 	return <Component {...pageProps} />
 }
 
+export function getBaseUrl() {
+	if (!isServer()) return '' // csr should use relative path
+	if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}` // ssr on vercel should use vercel url
+
+	return `http://localhost:${process.env.PORT ?? 3000}` // dev ssr should use localhost
+}
+
 export default withTRPC<AppRouter>({
 	config({ ctx }) {
-		const url = `${getTrpcBaseUrl()}/api/trpc`
+		const url = `${getBaseUrl()}/api/trpc`
 		const links = [
 			loggerLink({
 				enabled: (opts) =>
