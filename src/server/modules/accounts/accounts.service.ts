@@ -1,26 +1,24 @@
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime'
 import { AccountsRepo } from './accounts.repo'
 import { CreateUserInput } from './accounts.schema'
 export * as Accounts from './accounts.service'
-import * as trpc from '@trpc/server'
-import { PrismaClient } from '@prisma/client'
+import { LoginToken, User } from '@prisma/client'
+import { Deps } from '@/server/trpc/context'
 
-export const create = async (input: CreateUserInput, db: PrismaClient) => {
-	try {
-		return await AccountsRepo.create(input, db)
-	} catch (error) {
-		if (error instanceof PrismaClientKnownRequestError) {
-			if (error.code === 'P2002') {
-				throw new trpc.TRPCError({
-					code: 'CONFLICT',
-					message: 'User already exists',
-				})
-			}
-		}
+export const create = async (deps: Deps, input: CreateUserInput) => {
+	return AccountsRepo.create(deps, input)
+}
 
-		throw new trpc.TRPCError({
-			code: 'INTERNAL_SERVER_ERROR',
-			message: 'Something went wrong',
-		})
-	}
+export const findUser = async (deps: Deps, email: string) => {
+	return AccountsRepo.findUser(deps, email)
+}
+
+export const createToken = async (
+	deps: Deps,
+	args: { user: User; redirect: string }
+) => {
+	return AccountsRepo.createToken(deps, args)
+}
+
+export const generateOtp = (token: LoginToken, user: User) => {
+	return Buffer.from(`${token.id}:${user.email}`, 'utf-8').toString('base64')
 }
