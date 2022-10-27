@@ -1,28 +1,30 @@
 import { CreateUserInput } from '@/server/modules/accounts/accounts.schema'
-//import { trpc } from '@/utils/trpc'
+import { trpc } from '@/utils/trpc'
 import Link from 'next/link'
-//import { useRouter } from 'next/router'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 export default function LoginPage(): JSX.Element {
-	//const router = useRouter()
-	const { handleSubmit, register } = useForm<CreateUserInput>()
-	//const { mutate, error } = trpc.useMutation(['users.create'], {
-	//onSuccess: () => {
-	//router.push('/login')
-	//},
-	//})
+	const [success, setSuccess] = useState<boolean>(false)
 
-	const onSubmit = (_values: CreateUserInput) => {
-		//mutate(values)
+	const { handleSubmit, register } = useForm<CreateUserInput>()
+
+	const { mutate, error } = trpc.useMutation(['users.requestOtp'], {
+		onSuccess: () => {
+			setSuccess(true)
+		},
+	})
+
+	const onSubmit = (values: CreateUserInput) => {
+		mutate(values)
 	}
 
 	return (
 		<>
 			<form onSubmit={handleSubmit(onSubmit)}>
-				{/*
-				 *{error && error.message}
-				 */}
+				{error && error.message}
+				{success && <p>Check your email</p>}
+
 				<h1>Login</h1>
 				<input
 					type='email'
