@@ -1,61 +1,55 @@
+import { url } from '@/utils/url'
+import * as trpc from '@trpc/server'
+import { serialize } from 'cookie'
+import { UserMailer } from '../mailer/userMailer'
 import {
-	createUserOutput,
 	createUserInput,
+	createUserOutput,
 	requestOtpInput,
+	verifyOtpInput,
 } from '../modules/accounts/accounts.schema'
 import { Accounts } from '../modules/accounts/accounts.service'
 import { createRouter } from './context'
-import * as trpc from '@trpc/server'
-import { UserMailer } from '../mailer/userMailer'
-import { url } from '@/utils/url'
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime'
 
 export const userRouter = createRouter()
 	.mutation('registerUser', {
 		input: createUserInput,
 		output: createUserOutput,
 		async resolve({ input, ctx }) {
-			try {
-				return await Accounts.create(ctx.deps, input)
-			} catch (error) {
-				if (error instanceof PrismaClientKnownRequestError) {
-					if (error.code === 'P2002') {
-						throw new trpc.TRPCError({
-							code: 'CONFLICT',
-							message: 'User already exists',
-						})
-					}
-				}
-
-				throw new trpc.TRPCError({
-					cause: error,
-					code: 'INTERNAL_SERVER_ERROR',
-					message: 'Something went wrong',
-				})
-			}
+			const userResult = await Accounts.create(ctx.deps, input)
+			if (userResult.isErr()) throw new trpc.TRPCError(userResult.error)
+			return userResult.value
 		},
 	})
 	.mutation('requestOtp', {
 		input: requestOtpInput,
 		async resolve({ input, ctx }) {
-			const { email, redirect } = input
-
-			const user = await Accounts.findUser(ctx.deps, email)
-			if (!user) {
-				throw new trpc.TRPCError({
-					code: 'NOT_FOUND',
-					message: 'User not found',
-				})
-			}
-
-			const token = await Accounts.createToken(ctx.deps, { user, redirect })
+			const result = await Accounts.createOtpToken(ctx.deps, input)
+			if (result.isErr()) throw new trpc.TRPCError(result.error)
 
 			UserMailer.sendLoginEmail({
-				user,
-				token: Accounts.generateOtp(token, user),
 				url,
+				user: result.value.user,
+				token: result.value.token,
 			})
 
 			return true
+		},
+	})
+	.query('verifyOtp', {
+		input: verifyOtpInput,
+		async resolve({ input, ctx }) {
+			const tokenResult = await Accounts.verifyOtp(ctx.deps, input)
+			if (tokenResult.isErr()) throw new trpc.TRPCError(tokenResult.error)
+			const token = tokenResult.value
+
+			const jwt = Accounts.signJwt({
+				email: token?.user.email,
+				id: token?.user.id,
+			})
+
+			ctx.res.setHeader('Set-Cookie', serialize('token', jwt, { path: '/' }))
+
+			return { redirect: token?.redirect }
 		},
 	})

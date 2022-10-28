@@ -13,12 +13,29 @@ export const createToken = async (
 	{ user, redirect }: { user: User; redirect: string }
 ) => {
 	return db.loginToken.create({
-		data: { redirect, user: { connect: { id: user.id } } },
+		data: {
+			redirect,
+			user: { connect: { id: user.id } },
+		},
 	})
 }
 
 export const findUser = async ({ db }: Deps, email: string) => {
 	return db.user.findUnique({
 		where: { email },
+	})
+}
+
+export const findUserLoginToken = async (
+	{ db }: Deps,
+	tokenId: string,
+	email: string
+) => {
+	return db.loginToken.findFirst({
+		where: {
+			id: tokenId,
+			user: { email },
+		},
+		include: { user: true },
 	})
 }

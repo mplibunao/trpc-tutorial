@@ -20,3 +20,9 @@ export const requestOtpInput = z.object({
 })
 
 export type RequestOtpInput = z.infer<typeof requestOtpInput>
+
+export const verifyOtpInput = z.object({
+	hash: z.string(),
+})
+
+export type VerifyOtpInput = z.infer<typeof verifyOtpInput>
