@@ -53,3 +53,8 @@ export const userRouter = createRouter()
 			return { redirect: token?.redirect }
 		},
 	})
+	.query('me', {
+		async resolve({ ctx }) {
+			return ctx.user
+		},
+	})
