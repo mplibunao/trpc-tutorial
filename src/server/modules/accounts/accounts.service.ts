@@ -38,7 +38,7 @@ export const findUser = async (
 ): Promise<Result<User, FindUserError>> => {
 	try {
 		const user = await AccountsRepo.findUser(deps, email)
-		if (!user) return err(new UserNotFound('User not found'))
+		if (!user) return err(new UserNotFound())
 
 		return ok(user)
 	} catch (error) {
@@ -80,6 +80,12 @@ export const verifyOtp = async (deps: Deps, { hash }: VerifyOtpInput) => {
 	}
 }
 
+export const signJwt = (data: object) => {
+	return jwt.sign(data, SECRET, {
+		expiresIn: '1d',
+	})
+}
+
 const decodeOtp = (hash: string) => {
 	return decode(hash).split(':')
 }
@@ -94,12 +100,6 @@ const decode = (data: string) => {
 
 const encode = (data: string) => {
 	return Buffer.from(data, 'utf-8').toString('base64')
-}
-
-export const signJwt = (data: object) => {
-	return jwt.sign(data, SECRET, {
-		expiresIn: '1d',
-	})
 }
 
 function verifyJwt<T>(token: string) {

@@ -48,6 +48,7 @@ export const userRouter = createRouter()
 				id: token?.user.id,
 			})
 
+			// no samesite: strict/lax and httpOnly: true?
 			ctx.res.setHeader('Set-Cookie', serialize('token', jwt, { path: '/' }))
 
 			return { redirect: token?.redirect }
