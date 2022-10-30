@@ -28,12 +28,17 @@ export const userRouter = createRouter()
 		input: requestOtpInput,
 		async resolve({ input, ctx }) {
 			const tokenResult = await Accounts.createOtpToken(ctx.deps, input)
-			if (tokenResult.isErr()) throw tokenResult.error
+			const token = tokenResult.match(
+				(token) => token,
+				(err) => {
+					throw err
+				}
+			)
 
 			UserMailer.sendLoginEmail({
 				url,
-				user: tokenResult.value.user,
-				token: tokenResult.value.token,
+				user: token.user,
+				token: token.token,
 			})
 
 			return true
