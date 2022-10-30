@@ -1,5 +1,4 @@
 import { url } from '@/utils/url'
-import * as trpc from '@trpc/server'
 import { serialize } from 'cookie'
 import { UserMailer } from '../mailer/userMailer'
 import {
@@ -17,7 +16,7 @@ export const userRouter = createRouter()
 		output: createUserOutput,
 		async resolve({ input, ctx }) {
 			const userResult = await Accounts.create(ctx.deps, input)
-			if (userResult.isErr()) throw new trpc.TRPCError(userResult.error)
+			if (userResult.isErr()) throw userResult.error
 			return userResult.value
 		},
 	})
@@ -25,7 +24,7 @@ export const userRouter = createRouter()
 		input: requestOtpInput,
 		async resolve({ input, ctx }) {
 			const tokenResult = await Accounts.createOtpToken(ctx.deps, input)
-			if (tokenResult.isErr()) throw new trpc.TRPCError(tokenResult.error)
+			if (tokenResult.isErr()) throw tokenResult.error
 
 			UserMailer.sendLoginEmail({
 				url,
@@ -40,7 +39,7 @@ export const userRouter = createRouter()
 		input: verifyOtpInput,
 		async resolve({ input, ctx }) {
 			const tokenResult = await Accounts.verifyOtp(ctx.deps, input)
-			if (tokenResult.isErr()) throw new trpc.TRPCError(tokenResult.error)
+			if (tokenResult.isErr()) throw tokenResult.error
 			const token = tokenResult.value
 
 			const jwt = Accounts.signJwt({
