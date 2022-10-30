@@ -24,13 +24,13 @@ export const userRouter = createRouter()
 	.mutation('requestOtp', {
 		input: requestOtpInput,
 		async resolve({ input, ctx }) {
-			const result = await Accounts.createOtpToken(ctx.deps, input)
-			if (result.isErr()) throw new trpc.TRPCError(result.error)
+			const tokenResult = await Accounts.createOtpToken(ctx.deps, input)
+			if (tokenResult.isErr()) throw new trpc.TRPCError(tokenResult.error)
 
 			UserMailer.sendLoginEmail({
 				url,
-				user: result.value.user,
-				token: result.value.token,
+				user: tokenResult.value.user,
+				token: tokenResult.value.token,
 			})
 
 			return true
