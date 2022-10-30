@@ -18,6 +18,7 @@ model User {
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @default(now())
   LoginToken LoginToken[]
+  Post       Post[]
 }
 
 model LoginToken {
@@ -26,4 +27,14 @@ model LoginToken {
   userId    String
   user      User     @relation(fields: [userId], references: [id])
   redirect  String   @default("/")
+}
+
+model Post {
+  id        String   @unique @default(uuid())
+  title     String
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
 }
