@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@hookform/resolvers': ^2.9.10
   '@prisma/client': ^4.5.0
   '@trpc/client': ^9.25.3
   '@trpc/next': ^9.25.3
@@ -34,6 +35,7 @@ specifiers:
   zod: ^3.19.1
 
 dependencies:
+  '@hookform/resolvers': 2.9.10_react-hook-form@7.38.0
   '@prisma/client': 4.5.0_prisma@4.5.0
   '@trpc/client': 9.27.4_@trpc+server@9.27.4
   '@trpc/next': 9.27.4_l2t6vv6lmp6aralgreey6zoq4a
@@ -127,6 +129,14 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /@hookform/resolvers/2.9.10_react-hook-form@7.38.0:
+    resolution: {integrity: sha512-JIL1DgJIlH9yuxcNGtyhsWX/PgNltz+5Gr6+8SX9fhXc/hPbEIk6wPI82nhgvp3uUb6ZfAM5mqg/x7KR7NAb+A==}
+    peerDependencies:
+      react-hook-form: ^7.0.0
+    dependencies:
+      react-hook-form: 7.38.0_react@18.2.0
+    dev: false
 
   /@humanwhocodes/config-array/0.11.6:
     resolution: {integrity: sha512-jJr+hPTJYKyDILJfhNSHsjiwXYf26Flsz8DvNndOsHs5pwSnpGUEy8yzF0JYhCEvTDdV2vuOK5tt8BVhwO5/hg==}

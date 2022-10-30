@@ -1,9 +1,13 @@
-import { CreateUserInput } from '@/server/modules/accounts/accounts.schema'
+import {
+	requestOtpInput,
+	RequestOtpInput,
+} from '@/server/modules/accounts/accounts.schema'
 import { trpc } from '@/utils/trpc'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 function VerifyToken({ hash }: { hash: string }) {
 	const router = useRouter()
@@ -22,16 +26,19 @@ export default function LoginForm(): JSX.Element {
 	const router = useRouter()
 	const [success, setSuccess] = useState<boolean>(false)
 
-	const { handleSubmit, register } = useForm<CreateUserInput>()
+	const { handleSubmit, register } = useForm<RequestOtpInput>({
+		resolver: zodResolver(requestOtpInput),
+		defaultValues: { email: '' },
+	})
 
-	const { mutate, error } = trpc.useMutation(['users.requestOtp'], {
+	const { mutate: requestOtp, error } = trpc.useMutation(['users.requestOtp'], {
 		onSuccess: () => {
 			setSuccess(true)
 		},
 	})
 
-	const onSubmit = (values: CreateUserInput) => {
-		mutate(values)
+	const onSubmit = (values: RequestOtpInput) => {
+		requestOtp({ ...values, redirect: router.asPath })
 	}
 
 	const hash = router.asPath.split('#token=')[1]

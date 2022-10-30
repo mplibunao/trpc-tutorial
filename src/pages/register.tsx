@@ -1,12 +1,18 @@
-import { CreateUserInput } from '@/server/modules/accounts/accounts.schema'
+import {
+	createUserInput,
+	CreateUserInput,
+} from '@/server/modules/accounts/accounts.schema'
 import { trpc } from '@/utils/trpc'
+import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
 
 export default function RegisterPage(): JSX.Element {
 	const router = useRouter()
-	const { handleSubmit, register } = useForm<CreateUserInput>()
+	const { handleSubmit, register } = useForm<CreateUserInput>({
+		resolver: zodResolver(createUserInput),
+	})
 	const { mutate, error } = trpc.useMutation(['users.registerUser'], {
 		onSuccess: () => {
 			router.push('/login')
