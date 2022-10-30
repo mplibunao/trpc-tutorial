@@ -5,8 +5,17 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
-function VerifyToken() {
-	return <p>Verifying...</p>
+function VerifyToken({ hash }: { hash: string }) {
+	const router = useRouter()
+	const { data, isLoading } = trpc.useQuery(['users.verifyOtp', { hash }])
+
+	if (isLoading) {
+		return <p>Verifying...</p>
+	}
+
+	router.push(data?.redirect?.includes('login') ? '/' : data?.redirect || '/')
+
+	return <p>Redirecting...</p>
 }
 
 export default function LoginPage(): JSX.Element {
@@ -28,7 +37,7 @@ export default function LoginPage(): JSX.Element {
 	const hash = router.asPath.split('#token')[1]
 
 	if (hash) {
-		return <VerifyToken />
+		return <VerifyToken hash={hash} />
 	}
 
 	return (
