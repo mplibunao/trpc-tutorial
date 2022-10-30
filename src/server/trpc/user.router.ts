@@ -16,8 +16,12 @@ export const userRouter = createRouter()
 		output: createUserOutput,
 		async resolve({ input, ctx }) {
 			const userResult = await Accounts.create(ctx.deps, input)
-			if (userResult.isErr()) throw userResult.error
-			return userResult.value
+			return userResult.match(
+				(res) => res,
+				(err) => {
+					throw err
+				}
+			)
 		},
 	})
 	.mutation('requestOtp', {
@@ -39,8 +43,12 @@ export const userRouter = createRouter()
 		input: verifyOtpInput,
 		async resolve({ input, ctx }) {
 			const tokenResult = await Accounts.verifyOtp(ctx.deps, input)
-			if (tokenResult.isErr()) throw tokenResult.error
-			const token = tokenResult.value
+			const token = tokenResult.match(
+				(result) => result,
+				(err) => {
+					throw err
+				}
+			)
 
 			const jwt = Accounts.signJwt({
 				email: token?.user.email,
