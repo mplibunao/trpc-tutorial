@@ -86,6 +86,10 @@ export const signJwt = (data: object) => {
 	})
 }
 
+export function verifyJwt<T>(token: string) {
+	return jwt.verify(token, SECRET) as T
+}
+
 const decodeOtp = (hash: string) => {
 	return decode(hash).split(':')
 }
@@ -100,8 +104,4 @@ const decode = (data: string) => {
 
 const encode = (data: string) => {
 	return Buffer.from(data, 'utf-8').toString('base64')
-}
-
-function verifyJwt<T>(token: string) {
-	return jwt.verify(token, SECRET) as T
 }
