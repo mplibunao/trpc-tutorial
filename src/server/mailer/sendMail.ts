@@ -1,5 +1,3 @@
-import nodemailer from 'nodemailer'
-
 export interface sendEmail {
 	to: string
 	html: string
@@ -7,31 +5,19 @@ export interface sendEmail {
 }
 
 export const sendEmail = async ({ to, html, subject }: sendEmail) => {
-	// Generate test SMTP service account from ethereal.email
-	// Only needed if you don't have a real mail account for testing
-	const testAccount = await nodemailer.createTestAccount()
-
-	// create reusable transporter object using the default SMTP transport
-	const transporter = nodemailer.createTransport({
-		host: 'smtp.ethereal.email',
-		port: 587,
-		secure: false, // true for 465, false for other ports
-		auth: {
-			user: testAccount.user,
-			pass: testAccount.pass,
-		},
-	})
-
 	const message = {
-		from: '"Jane Doe" <j.deo@example.com>',
+		from: '"Jane Doe" <j.doe@example.com>',
 		to,
 		subject,
 		html,
 	}
-
-	transporter.sendMail(message)
-
-	if (process.env.NODE_ENV === 'development') {
+	if (process.env.NODE_ENV === 'production') {
+		/*
+		 *You can use a specific email service sdk, use fetch to an api or use nodemailer
+		 *Not putting nodemailer as default since it's pretty heavy considering there are lighter alternatives
+		 */
+		throw new Error('No production email implementation provided')
+	} else if (process.env.NODE_ENV === 'development') {
 		const { default: previewEmail } = await import('preview-email')
 		previewEmail(message).then(console.log).catch(console.error)
 	}

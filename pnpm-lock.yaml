@@ -9,7 +9,6 @@ specifiers:
   '@types/cookie': ^0.5.1
   '@types/jsonwebtoken': ^8.5.9
   '@types/node': 18.11.3
-  '@types/nodemailer': ^6.4.6
   '@types/preview-email': ^2.0.1
   '@types/react': 18.0.21
   '@types/react-dom': 18.0.6
@@ -23,7 +22,6 @@ specifiers:
   jsonwebtoken: ^8.5.1
   neverthrow: ^5.1.0
   next: 12.3.1
-  nodemailer: ^6.8.0
   prettier: ^2.7.1
   preview-email: ^3.0.7
   prisma: ^4.5.0
@@ -46,7 +44,6 @@ dependencies:
   jsonwebtoken: 8.5.1
   neverthrow: 5.1.0
   next: 12.3.1_biqbaboplfbrettd7655fr4n2y
-  nodemailer: 6.8.0
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
   react-hook-form: 7.38.0_react@18.2.0
@@ -58,7 +55,6 @@ devDependencies:
   '@types/cookie': 0.5.1
   '@types/jsonwebtoken': 8.5.9
   '@types/node': 18.11.3
-  '@types/nodemailer': 6.4.6
   '@types/preview-email': 2.0.1
   '@types/react': 18.0.21
   '@types/react-dom': 18.0.6
@@ -2129,6 +2125,7 @@ packages:
   /nodemailer/6.8.0:
     resolution: {integrity: sha512-EjYvSmHzekz6VNkNd12aUqAco+bOkRe3Of5jVhltqKhEsjw/y0PYPJfp83+s9Wzh1dspYAkUW/YNQ350NATbSQ==}
     engines: {node: '>=6.0.0'}
+    dev: true
 
   /npm-run-path/2.0.2:
     resolution: {integrity: sha512-lJxZYlT4DW/bRUtFh1MQIWqmLwQfAxnqWG4HhEdjMlkrJYnJn0Jrr2u3mgxqaWsdiBc76TYkTG/mhrnYTuzfHw==}
