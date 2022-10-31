@@ -7,9 +7,11 @@ export default trpcNext.createNextApiHandler({
 	createContext,
 	onError: ({ error, path }) => {
 		if (error.code === 'INTERNAL_SERVER_ERROR') {
-			console.error(`Something went wrong on ${path}: ${error}`) // eslint-disable-line no-console
+			console.error(
+				`Something went wrong on ${path}: ${error}, cause: ${error.cause}`
+			) // eslint-disable-line no-console
 		} else {
-			console.log('error', path, error) // eslint-disable-line no-console
+			console.log(`error ${path}: ${error}, cause: ${error.cause}`) // eslint-disable-line no-console
 		}
 	},
 })
