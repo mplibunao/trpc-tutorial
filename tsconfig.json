@@ -16,7 +16,7 @@
     "incremental": true,
     "noUncheckedIndexedAccess": true,
     "checkJs": true,
-    "removeComments": false,
+    "removeComments": true,
     "noUnusedLocals": true,
     "allowUnusedLabels": false,
     "noUnusedParameters": true,
