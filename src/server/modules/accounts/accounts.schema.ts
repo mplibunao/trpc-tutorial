@@ -2,20 +2,20 @@ import { z } from 'zod'
 
 export const createUserInput = z.object({
 	name: z.string(),
-	email: z.string().email(),
+	email: z.string().email({ message: 'Invalid email' }),
 })
 
 export type CreateUserInput = z.infer<typeof createUserInput>
 
 export const createUserOutput = z.object({
 	name: z.string(),
-	email: z.string().email(),
+	email: z.string().email({ message: 'Invalid email' }),
 })
 
 export type CreateUserOutput = z.infer<typeof createUserOutput>
 
 export const requestOtpInput = z.object({
-	email: z.string().email(),
+	email: z.string().email({ message: 'Invalid email' }),
 	redirect: z.string().default('/'),
 })
 
