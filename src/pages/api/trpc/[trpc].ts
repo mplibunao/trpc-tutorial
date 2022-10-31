@@ -13,5 +13,9 @@ export default trpcNext.createNextApiHandler({
 		} else {
 			console.log(`error ${path}: ${error}, cause: ${error.cause}`) // eslint-disable-line no-console
 		}
+
+		if (process.env.NODE_ENV === 'development') {
+			console.log('error', error)
+		}
 	},
 })
