@@ -16,29 +16,20 @@ export const userRouter = createRouter()
 		output: createUserOutput,
 		async resolve({ input, ctx }) {
 			const userResult = await Accounts.create(ctx.deps, input)
-			return userResult.match(
-				(res) => res,
-				(err) => {
-					throw err
-				}
-			)
+			if (userResult.isErr()) throw userResult.error
+			return userResult.value
 		},
 	})
 	.mutation('requestOtp', {
 		input: requestOtpInput,
 		async resolve({ input, ctx }) {
 			const tokenResult = await Accounts.createOtpToken(ctx.deps, input)
-			const token = tokenResult.match(
-				(token) => token,
-				(err) => {
-					throw err
-				}
-			)
+			if (tokenResult.isErr()) throw tokenResult.error
 
 			UserMailer.sendLoginEmail({
 				url,
-				user: token.user,
-				token: token.token,
+				user: tokenResult.value.user,
+				token: tokenResult.value.token,
 			})
 
 			return true
@@ -48,22 +39,17 @@ export const userRouter = createRouter()
 		input: verifyOtpInput,
 		async resolve({ input, ctx }) {
 			const tokenResult = await Accounts.verifyOtp(ctx.deps, input)
-			const token = tokenResult.match(
-				(result) => result,
-				(err) => {
-					throw err
-				}
-			)
+			if (tokenResult.isErr()) throw tokenResult.error
 
 			const jwt = Accounts.signJwt({
-				email: token?.user.email,
-				id: token?.user.id,
+				email: tokenResult.value?.user.email,
+				id: tokenResult.value?.user.id,
 			})
 
 			// no samesite: strict/lax and httpOnly: true?
 			ctx.res.setHeader('Set-Cookie', serialize('token', jwt, { path: '/' }))
 
-			return { redirect: token?.redirect }
+			return { redirect: tokenResult.value?.redirect }
 		},
 	})
 	.query('me', {
